@@ -1,0 +1,64 @@
+public function m_login($username,$password)
+		{
+			$newpass = sha1(md5($password.'c[x]t!@n>[*]{<Lo[R];eN}Ce}'));
+
+				$sql = "SELECT 
+							`a`.`a_id`,
+							`a`.`a_empno`,
+							`a`.`a_eld`,
+							`a`.`a_machineid`,
+							`a`.`a_password`,
+							`a`.`a_secondpass`,
+							`a`.`a_lastname`,
+							`a`.`a_mi`,
+							`a`.`a_middlename`,
+							`a`.`a_firstname`,
+							`a`.`a_status`,
+							`a`.`a_office`,
+							`a`.`a_division`,
+							`a`.`a_position`,
+							`a`.`a_level`,
+							`a`.`a_officetype`
+						FROM `tbl_account` `a`
+						WHERE `a_machineid` = '$username'
+							AND `a_password` = '$newpass'
+							AND `a_isactive` = 'yes'
+						";
+				$query = $this->db->query($sql);
+				
+					if($query->num_rows() == 1)
+					{
+						return $query->result();
+					}else{
+						$sql2 = "SELECT 
+									`a`.`a_id`,
+									`a`.`a_empno`,
+									`a`.`a_eld`,
+									`a`.`a_machineid`,
+									`a`.`a_password`,
+									`a`.`a_secondpass`,
+									`a`.`a_lastname`,
+									`a`.`a_mi`,
+									`a`.`a_middlename`,
+									`a`.`a_firstname`,
+									`a`.`a_status`,
+									`a`.`a_office`,
+									`a`.`a_division`,
+									`a`.`a_position`,
+									`a`.`a_level`,
+									`a`.`a_officetype`
+						FROM `tbl_account` `a`
+							LEFT JOIN `tbl_personalinfo` `pi`
+								ON `a`.`a_id` = `pi`.`a_id`
+						WHERE `a_machineid` = '$username'
+							AND REPLACE(`pi`.`pi_birthdate`,'-','') = '$password'
+							AND `a`.`a_isactive` = 'yes'
+						";
+						$query = $this->db->query($sql2);
+							if($query->num_rows() == 1){
+								return $query->result();
+							}else{
+								return false;
+							}
+					}
+		}
